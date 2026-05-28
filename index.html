@@ -1,43 +1,266 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Caza Notas - Musicala</title>
+  <title>Caza Notas · Musicala</title>
 
-<link rel="stylesheet" href="styles.css">
+  <meta
+    name="description"
+    content="Caza Notas de Musicala: un minijuego musical para entrenar el oído escuchando y reconociendo notas."
+  />
+
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
+  <main class="app-shell">
 
-<div class="game-container">
+    <!-- Fondo decorativo -->
+    <div class="background-glow background-glow-one" aria-hidden="true"></div>
+    <div class="background-glow background-glow-two" aria-hidden="true"></div>
 
-<h1>🎵 Caza Notas</h1>
+    <div class="floating-notes" aria-hidden="true">
+      <span>♪</span>
+      <span>♫</span>
+      <span>♬</span>
+      <span>♩</span>
+      <span>𝄞</span>
+      <span>♪</span>
+      <span>♫</span>
+      <span>♬</span>
+    </div>
 
-<p class="subtitle">Escucha la nota y adivina cuál es</p>
+    <section class="game-container" aria-label="Minijuego Caza Notas Musicala">
 
-<button id="playNote">🔊 Escuchar Nota</button>
+      <!-- Encabezado -->
+      <header class="game-header">
+        <div class="brand">
+          <img
+            src="logo.png"
+            alt="Logo de Musicala"
+            class="brand-logo"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+          />
 
-<div class="buttons">
+          <div class="brand-logo-fallback" aria-hidden="true">
+            M
+          </div>
 
-<button class="note-btn" data-note="C">Do</button>
-<button class="note-btn" data-note="D">Re</button>
-<button class="note-btn" data-note="E">Mi</button>
-<button class="note-btn" data-note="F">Fa</button>
-<button class="note-btn" data-note="G">Sol</button>
-<button class="note-btn" data-note="A">La</button>
-<button class="note-btn" data-note="B">Si</button>
+          <div class="brand-text">
+            <span class="brand-kicker">Musicala presenta</span>
+            <h1>Caza Notas</h1>
+          </div>
+        </div>
 
-</div>
+        <p class="subtitle">
+          Escucha con atención, atrapa la nota correcta y ayuda a Musi a subir de nivel.
+        </p>
+      </header>
 
-<p id="result"></p>
+      <!-- Panel de estado -->
+      <section class="status-panel" aria-label="Estado del juego">
+        <article class="status-card">
+          <span class="status-label">Puntos</span>
+          <strong id="score">0</strong>
+        </article>
 
-<p class="score">Puntos: <span id="score">0</span></p>
+        <article class="status-card">
+          <span class="status-label">Nivel</span>
+          <strong id="level">1</strong>
+        </article>
 
-</div>
+        <article class="status-card">
+          <span class="status-label">Combo</span>
+          <strong id="combo">x0</strong>
+        </article>
 
-<script src="app.js"></script>
+        <article class="status-card">
+          <span class="status-label">Tiempo</span>
+          <strong id="timeLeft">60</strong>
+        </article>
+      </section>
 
+      <!-- Barra de tiempo -->
+      <div class="time-bar" aria-hidden="true">
+        <div id="timeBarFill" class="time-bar-fill"></div>
+      </div>
+
+      <!-- Zona principal -->
+      <section class="stage">
+
+        <!-- Personaje / imagen característica -->
+        <aside class="character-card" aria-label="Guía del juego">
+          <div class="character-badge">🎧</div>
+
+          <img
+            src="musi.png"
+            alt="Musi, personaje guía de Musicala"
+            class="character-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+
+          <div class="character-fallback" aria-hidden="true">
+            <span class="character-face">🎵</span>
+          </div>
+
+          <div class="character-dialogue">
+            <p id="musiMessage">
+              ¡Hola! Soy Musi. Escucha la nota y elige la respuesta correcta.
+            </p>
+          </div>
+        </aside>
+
+        <!-- Juego -->
+        <section class="play-card">
+
+          <!-- Pantalla inicial -->
+          <div id="startScreen" class="screen screen-start is-active">
+            <span class="screen-icon">🎼</span>
+
+            <h2>Entrena tu oído musical</h2>
+
+            <p>
+              Presiona iniciar, escucha cada nota y selecciona si fue Do, Re, Mi, Fa, Sol, La o Si.
+            </p>
+
+            <div class="mode-preview">
+              <div>
+                <strong>Fácil</strong>
+                <span>Do · Re · Mi</span>
+              </div>
+
+              <div>
+                <strong>Medio</strong>
+                <span>Escala parcial</span>
+              </div>
+
+              <div>
+                <strong>Reto</strong>
+                <span>Escala completa</span>
+              </div>
+            </div>
+
+            <button id="startGame" class="primary-action" type="button">
+              Empezar misión
+            </button>
+          </div>
+
+          <!-- Pantalla activa del juego -->
+          <div id="gameScreen" class="screen screen-game">
+            <div class="note-orb" aria-hidden="true">
+              <span id="hiddenNoteSymbol">?</span>
+            </div>
+
+            <p class="instruction">
+              Escucha la nota y escoge la opción correcta.
+            </p>
+
+            <div class="main-actions">
+              <button id="playNote" class="listen-button" type="button">
+                <span class="button-icon">🔊</span>
+                <span>Escuchar nota</span>
+              </button>
+            </div>
+
+            <div class="buttons" aria-label="Opciones de notas musicales">
+              <button class="note-btn note-do" data-note="C" type="button">
+                <span>Do</span>
+                <small>C</small>
+              </button>
+
+              <button class="note-btn note-re" data-note="D" type="button">
+                <span>Re</span>
+                <small>D</small>
+              </button>
+
+              <button class="note-btn note-mi" data-note="E" type="button">
+                <span>Mi</span>
+                <small>E</small>
+              </button>
+
+              <button class="note-btn note-fa" data-note="F" type="button">
+                <span>Fa</span>
+                <small>F</small>
+              </button>
+
+              <button class="note-btn note-sol" data-note="G" type="button">
+                <span>Sol</span>
+                <small>G</small>
+              </button>
+
+              <button class="note-btn note-la" data-note="A" type="button">
+                <span>La</span>
+                <small>A</small>
+              </button>
+
+              <button class="note-btn note-si" data-note="B" type="button">
+                <span>Si</span>
+                <small>B</small>
+              </button>
+            </div>
+
+            <div class="feedback-zone" aria-live="polite">
+              <p id="result"></p>
+            </div>
+
+            <div class="lives" aria-label="Vidas restantes">
+              <span class="lives-label">Vidas</span>
+
+              <div id="livesContainer" class="lives-icons">
+                <span>💜</span>
+                <span>💜</span>
+                <span>💜</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pantalla final -->
+          <div id="endScreen" class="screen screen-end">
+            <span class="screen-icon">🏆</span>
+
+            <h2>Resultado final</h2>
+
+            <p id="finalMessage">
+              ¡Buen intento! Musi ya está afinando la siguiente ronda.
+            </p>
+
+            <div class="final-stats">
+              <article>
+                <span>Puntaje</span>
+                <strong id="finalScore">0</strong>
+              </article>
+
+              <article>
+                <span>Récord</span>
+                <strong id="bestScore">0</strong>
+              </article>
+
+              <article>
+                <span>Nivel</span>
+                <strong id="finalLevel">1</strong>
+              </article>
+            </div>
+
+            <button id="restartGame" class="primary-action" type="button">
+              Jugar otra vez
+            </button>
+          </div>
+
+        </section>
+      </section>
+
+      <!-- Pie -->
+      <footer class="game-footer">
+        <p>
+          Un minijuego de entrenamiento auditivo creado por <strong>Musicala</strong>.
+        </p>
+      </footer>
+
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
